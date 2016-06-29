@@ -28,6 +28,10 @@ int main() {
 	client.sin_addr.s_addr = INADDR_ANY;
 	client.sin_port = CLIENT_PORT;
 
+	int enable = 1;
+	if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0)
+    	perror("setsockopt(SO_REUSEADDR) failed:\t");
+
 	if (bind(sock, (struct sockaddr *)&client, sizeof(client)) < 0) {
 
 		perror("CLIENT: bind:\t");

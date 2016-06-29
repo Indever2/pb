@@ -12,7 +12,7 @@ int main() {
 
 	struct sockaddr_in sin, client;
 
-	if ( (serv_sock = socket(AF_INET, SOCK_STREAM, 0)) < 0){
+	if ( (serv_sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 
 		perror("SERVER: socket:\t");
 		exit(-1);
@@ -30,7 +30,7 @@ int main() {
 	sin.sin_addr.s_addr = INADDR_ANY;
 	sin.sin_port = PORT;
 
-	if (bind(serv_sock, (struct sockaddr *)&sin, sizeof(sin)) < 0){
+	if (bind(serv_sock, (struct sockaddr *)&sin, sizeof(sin)) < 0) {
 
 		perror("SERVER: bind:\t");
 		exit(-1);
