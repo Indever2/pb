@@ -19,6 +19,11 @@ int main() {
 
 	}
 
+	int enable = 1;
+
+	if (setsockopt(serv_sock, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0)
+    	perror("setsockopt(SO_REUSEADDR) failed:\t");
+
 	memset((char *)&sin, '\0', sizeof(sin));
 
 	sin.sin_family = AF_INET;
