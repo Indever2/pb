@@ -50,10 +50,6 @@ int main() {
 
 		printf("client #%d\n", count);
 
-		int opt = 1;
-    	if (setsockopt(client_sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1) 
-    		perror("setsockopt");
-
 		shutdown(client_sock, SHUT_RDWR);
 		close(client_sock);
 
