@@ -2,8 +2,9 @@
 
 #define SERVER_PORT 3333
 #define CLIENT_PORT 3334
-#define SERVER_HOST "localhost"
 #define BUF_SIZE 64
+
+#define SERVER_HOST "localhost"
 #define TIME_REQ "need_time"
 
 int main() {
@@ -40,7 +41,7 @@ int main() {
 
 	}
 
-	memset((char *)&client, '\0', sizeof(server));
+	bzero(&server, sizeof(server));
 
 	h = gethostbyname(SERVER_HOST);
 	server.sin_family = AF_INET;

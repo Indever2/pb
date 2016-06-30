@@ -44,7 +44,6 @@ int main() {
 	for(;;) {
 
 		client_sock = accept(serv_sock, (struct sockaddr *)NULL, NULL);
-		//client_sock = accept(serv_sock, (struct sockaddr *)&client, &answ_len);
 
 		write(client_sock, "request accepted", sizeof("request accepted"));
 		count++;
@@ -69,7 +68,7 @@ int main() {
 
 				time_t ticks = time(NULL);
 				snprintf(time_buf, sizeof(time_buf), "%.24s\er\en", ctime(&ticks));
-				write(client_sock, time_buf, sizeof(time_buf));
+				write(client_sock, time_buf, sizeof(time_buf)); //отправляем тек. время клиенту.
 
 				close(client_sock);
 				printf("CHILD SERVER PROCESS:\tend\n");
