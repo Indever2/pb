@@ -8,9 +8,8 @@ int main() {
 
 	int serv_sock, client_sock;
 	int answ_len, count = 0;
-	int serv_pid;
+	pid_t pid;
 	char buffer[BUF_SIZE], time_buf[BUF_SIZE];
-	time_t ticks;
 
 	struct sockaddr_in sin, client;
 
@@ -25,7 +24,7 @@ int main() {
 	if (setsockopt(serv_sock, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0)
     	perror("setsockopt(SO_REUSEADDR) failed:\t");
 
-	memset((char *)&sin, '\0', sizeof(sin));
+	bzero(&sin, sizeof(sin));
 
 	sin.sin_family = AF_INET;
 	sin.sin_addr.s_addr = INADDR_ANY;
@@ -44,43 +43,47 @@ int main() {
 
 	for(;;) {
 
-		client_sock = accept(serv_sock, (struct sockaddr *)&client, &answ_len);
+		client_sock = accept(serv_sock, (struct sockaddr *)NULL, NULL);
+		//client_sock = accept(serv_sock, (struct sockaddr *)&client, &answ_len);
 
-		write(client_sock, "request accepted\n", sizeof("request accepted"));
+		write(client_sock, "request accepted", sizeof("request accepted"));
 		count++;
 
 		printf("connection #%d open\n", count);
 
 		answ_len = recv(client_sock, buffer, BUF_SIZE, 0);
-		write(1, buffer, answ_len);
-		printf("\n");
+		printf("REQUEST FROM CLIENT:\t%s\n", buffer);
 
 		if (strcmp(buffer, "need_time") == 0) {
 
-			serv_pid = fork();
+			pid = fork();
 
-			if (serv_pid == -1) {
+			if (pid == -1) {
 
 				perror("SERVER: fork error:\t");
 
-			} else if (!serv_pid) {
+			} else if (!pid) {
 
-				printf("CHILD SERVER PROCESS STARTED\n");
+				printf("CHILD SERVER PROCESS:\tstart\n");
+				close(serv_sock);
 
-				ticks = time(NULL);
+				time_t ticks = time(NULL);
 				snprintf(time_buf, sizeof(time_buf), "%.24s\er\en", ctime(&ticks));
 				write(client_sock, time_buf, sizeof(time_buf));
 
-				shutdown(client_sock, SHUT_RDWR);
 				close(client_sock);
+				printf("CHILD SERVER PROCESS:\tend\n");
+
 				exit(0);
 
 			}
 
 		}
 
-		printf("connection #%d closed", count);
-		write(client_sock, "HALTU\n", sizeof("HALTU\n"));
+		sleep(2);
+		write(client_sock, "HALTU", sizeof("HALTU")); //отправляем сигнал остановки клиенту.
+
+		printf("connection #%d closed\n", count);
 
 		shutdown(client_sock, SHUT_RDWR);
 		close(client_sock);

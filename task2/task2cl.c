@@ -23,7 +23,7 @@ int main() {
 
 	}
 
-	memset((char *)&client, '\0', sizeof(client));
+	bzero(&client, sizeof(client));
 
 	client.sin_family = AF_INET;
 	client.sin_addr.s_addr = INADDR_ANY;
@@ -55,14 +55,17 @@ int main() {
 	}
 
 	answ_len = recv(sock, buffer, BUF_SIZE, 0);
-	write(1, buffer, answ_len);
+	printf("%s\n", buffer);
 
 	send(sock, TIME_REQ, sizeof(TIME_REQ), 0);
-
-	while (strcmp(buffer, "HALTU\n") != 0) {
+ 
+	for(;;) {
 
 		answ_len = recv(sock, buffer, BUF_SIZE, 0);
-		write(1, buffer, answ_len);
+		printf("%s\n", buffer);
+
+		if (strcmp(buffer, "HALTU") == 0)
+			break;
 
 	}
 
