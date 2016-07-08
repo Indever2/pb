@@ -12,21 +12,16 @@ int main() {
 
 	int sock = 0;
 	int answ_len = 0;
-	int enable = 1;
+	int enable = 1; //Для установки параметров сокета
 
 	char buffer[BUF_SIZE()], inp_buffer[BUF_SIZE()]; //константу BUF_SIZE() искать в unp.h (строка 143)
 
 	FILE *inp = fopen("input.txt", "r+");
 
-	struct hostent *h;
+	struct hostent *h; //Хост
 	struct sockaddr_in server, client;
 
-	if ( (sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-
-		perror("CLIENT: socket: \t");
-		exit(-1);
-
-	}
+	sock = Socket(AF_INET, SOCK_STREAM, 0);
 
 	memset(&client, 0, sizeof(client));
 
@@ -37,12 +32,7 @@ int main() {
 	if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0)
     	perror("setsockopt(SO_REUSEADDR) failed:\t");
 
-	if (bind(sock, (struct sockaddr *)&client, sizeof(client)) < 0) {
-
-		perror("CLIENT: bind:\t");
-		exit(-1);
-
-	}
+	Bind(sock, (struct sockaddr *)&client, sizeof(client));
 
     memset(&server, 0, sizeof(server));
 
@@ -51,13 +41,14 @@ int main() {
 	memcpy((char *)&server.sin_addr, h->h_addr, h->h_length);
 	server.sin_port = SERVER_PORT();
 
-	if (connect(sock, (struct sockaddr *)&server, sizeof(server)) < 0) {
+	if (connect(sock, (struct sockaddr *)&server, sizeof(server)) < 0) { //Пока без обертки т_т
 
 		perror("CLIENT: connect:\t");
 		exit(-1);
 
 	}
 
+    /*читаем из файла и отправляем считанные сообщения серверу*/
     while (!feof(inp)) {
 
         fgets(inp_buffer, BUF_SIZE(), inp);
@@ -66,13 +57,14 @@ int main() {
         sleep(1);
 
     }
- 
+    
+    /*Принимаем сообщения от сервера*/
 	for(;;) {
 
 		answ_len = recv(sock, buffer, BUF_SIZE(), 0);
 		printf("%s\n", buffer);
 
-		if (strcmp(buffer, "HALTU") == 0)
+		if (strcmp(buffer, "HALTU") == 0) //Ключевое слово HALTU означает конец передачи
 			break;
 
 	}
