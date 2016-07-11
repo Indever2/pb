@@ -29,8 +29,7 @@ int main() {
 	client.sin_addr.s_addr = INADDR_ANY;
 	client.sin_port = CLIENT_PORT();
 
-	if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0)
-    	perror("setsockopt(SO_REUSEADDR) failed:\t");
+	Setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int));
 
 	Bind(sock, (struct sockaddr *)&client, sizeof(client));
 
@@ -41,12 +40,7 @@ int main() {
 	memcpy((char *)&server.sin_addr, h->h_addr, h->h_length);
 	server.sin_port = SERVER_PORT();
 
-	if (connect(sock, (struct sockaddr *)&server, sizeof(server)) < 0) { //Пока без обертки т_т
-
-		perror("CLIENT: connect:\t");
-		exit(-1);
-
-	}
+	Connect(sock, (struct sockaddr *)&server, sizeof(server));
 
     /*читаем из файла и отправляем считанные сообщения серверу*/
     while (!feof(inp)) {

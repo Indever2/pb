@@ -220,3 +220,21 @@ void Select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, stru
         }
 
 }
+
+void Setsockopt(int s, int level, int optname, const void *optval, socklen_t optlen) {
+
+    if (setsockopt(s, level, optname, optval, optlen) < 0)
+        perror("setsockopt(SO_REUSEADDR) failed:\t");
+
+}
+
+void Connect(int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen) {
+
+    if (connect(sockfd, serv_addr, addrlen) < 0) {
+
+        perror("CLIENT: connect:\t");
+        exit(-1);
+
+    }
+
+}      
