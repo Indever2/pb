@@ -179,7 +179,7 @@ int Socket(int socket_family, int socket_type, int protocol){
 
     if ((sock = socket(socket_family, socket_type, protocol)) < 0) {
 
-        perror("SERVER: socket:\t");
+        perror("socket:\t");
         exit(-1);
 
     }
@@ -192,7 +192,7 @@ void Bind(int sockfd, struct sockaddr *my_addr, socklen_t addrlen) {
 
     if (bind(sockfd, my_addr, addrlen) < 0) {
 
-        perror("SERVER: bind:\t");
+        perror("bind:\t");
         exit(-1);
 
     }
@@ -203,7 +203,7 @@ void Listen (int s, int backlog) {
 
     if (listen(s, backlog) < 0) {
 
-        perror("SERVER: listen:\t");
+        perror("listen:\t");
         exit(3);
 
     }
@@ -214,7 +214,7 @@ void Select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, stru
 
     if (select(nfds, readfds, writefds, exceptfds, timeout) <= 0) {
 
-            perror("SERVER: select:\t");
+            perror("select:\t");
             exit(3);
 
         }
@@ -232,7 +232,7 @@ void Connect(int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen) {
 
     if (connect(sockfd, serv_addr, addrlen) < 0) {
 
-        perror("CLIENT: connect:\t");
+        perror("connect:\t");
         exit(-1);
 
     }

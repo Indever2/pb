@@ -90,8 +90,7 @@ int main() {
 
         serv_sock = Socket(AF_INET, SOCK_STREAM, 0); //Функции - обертки (название начинается с заглавной буквы) искать в unp.h
 
-        if (setsockopt(serv_sock, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0)
-            perror("setsockopt(SO_REUSEADDR) failed:\t");
+        Setsockopt(serv_sock, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int));
 
         memset(&sin, 0, sizeof(sin));
 
@@ -178,5 +177,4 @@ int main() {
 
     }
 
-}
-
+}    
