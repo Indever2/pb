@@ -15,7 +15,7 @@ void callback(u_char *arg, const struct pcap_pkthdr* pkthdr, const u_char* packe
     printf("Recieved Packet Size:\t%d\n", pkthdr->len); /* Длина заголовка */
     printf("Payload:\n");                               /* А теперь данные */
 
-    for (i = 0; i < pkthdr->len; i++) { 
+    for (int i = 0; i < pkthdr->len; i++) { 
 
         if (isprint(packet[i]))                         /* Проверка, является ли символ печатаемым */
 
