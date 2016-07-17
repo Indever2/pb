@@ -39,6 +39,7 @@ int main(int argc, char **argv) {
     char *dev = NULL; 
     char errbuf[PCAP_ERRBUF_SIZE]; 
     pcap_t *descr;
+    
     memset(&descr, 0, sizeof(descr)); 
     const u_char *packet = NULL;
 
