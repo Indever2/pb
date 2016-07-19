@@ -1,9 +1,9 @@
-/* * * * * * * * * * * * * * * * * * * * * * *
-*     Задание 5.                             *
-*     Перехватывает пакеты с первого в списке* 
-*     устройства и выводит их содержимое     *
-*     на экран. Разбирает заголовки.         *                    
-* * * * * * * * * * * * * * * * * * * * * * */
+/* * * * * * * * * * * * * * * * * * * * * * * *
+*     Задание 5.                               *
+*     Перехватывает пакеты с первого в списке  * 
+*     устройства и выводит их содержимое       *
+*     на экран. Разбирает заголовки ethernet.  *                    
+* * * * * * * * * * * * * * * * * * * * * * * */
 
 #include "unp.h"
 
@@ -12,7 +12,7 @@ void callback(u_char *arg, const struct pcap_pkthdr *pkthdr, const u_char *packe
     int eth_addr_pos = ETHER_ADDR_LEN; // для вывода адреса отправителя | назначения
     static int count = 0; 
     u_char *eth_addr_ptr; //буфер для хранения адреса
-    struct ether_header *eth_info; //заголовок ethernet
+    struct ether_header *eth_info; //структура - заголовок ethernet
 
     eth_info = (struct ether_header *) packet;
 
@@ -35,6 +35,7 @@ void callback(u_char *arg, const struct pcap_pkthdr *pkthdr, const u_char *packe
 
     }
 
+    //получение адерса назначения
     eth_addr_ptr = eth_info->ether_dhost;
 
     printf("\nDestination Address:\t");
@@ -44,6 +45,7 @@ void callback(u_char *arg, const struct pcap_pkthdr *pkthdr, const u_char *packe
 
     } while (--eth_addr_pos > 0);
 
+    //возвращение позиции адреса к началу и получение адреса отправителя.
     eth_addr_pos = ETHER_ADDR_LEN;
     eth_addr_ptr = eth_info->ether_shost;
 
