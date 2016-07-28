@@ -244,7 +244,7 @@ void Connect(int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen) {
 } 
 
 
-/* Обертки libpcap */  /*   
+/* Обертки libpcap */     
 
 char *Pcap_lookupdev(char *errbuf) {
 
@@ -323,4 +323,3 @@ void Pcap_loop(pcap_t *descr, int cnt, pcap_handler callback, u_char *user) {
     } 
 
 }
-*/

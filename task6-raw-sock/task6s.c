@@ -1,76 +1,63 @@
 /* * * * * * * * * * * * * * * * * * * * * * * *
 *     Задание 6.Сервер.                        *
-*     Формирование собственных заголовков      * 
-*     пакетов с помощью RAW-сокетов.           *
+*     Прием/передача сообщений с RAW-сокета,   * 
+*     с нашими собственными заголовками.       *
+*     (ИСПОЛЬЗУЕТСЯ ПРОТОКОЛ UDP)              *
 * * * * * * * * * * * * * * * * * * * * * * * */
 #include "unp.h"
 
-int main() {
+/* Функция, принимающая сообщений с RAW-сокета и отправляющая его обратно */
+void tk_echo(int sockfd, struct sockaddr *client, socklen_t client_len) {
 
-    int serv_sock = 0, client_sock = 0; //сокеты
-    int enable = 1; //Для установки параметров сокета
-    int answ_len, count = 0;
+    int n; // Длина принятого сообщения
+    socklen_t len; 
 
-    char buffer[BUF_SIZE()]; 
+    struct sockaddr_in *si; // Структура для получения данных о входящем сообщении
 
-    /*необходимо для проверки поступления данных на сокет*/
-    fd_set fd; 
-    struct timeval tv; //для тайм-аута ожидания
+    char buffer[BUF_SIZE()]; // Буффер сообщения
 
-    struct sockaddr_in sin, client;
-
-    serv_sock = Socket(AF_INET, SOCK_DGRAM, 0); //Функции - обертки (название начинается с заглавной буквы) искать в unp.h
-
-    Setsockopt(serv_sock, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int));
-
-    memset(&sin, 0, sizeof(sin));
-
-    sin.sin_family = AF_INET;
-    sin.sin_addr.s_addr = INADDR_ANY;
-    sin.sin_port = SERVER_PORT();
-
-    Bind(serv_sock, (struct sockaddr *)&sin, sizeof(sin));
-
-    printf("server started\n");
-
-    Listen(serv_sock, 3);
+    char *recv_addr = malloc(sizeof(char *)* BUF_SIZE()); // Адрес отправителя
 
     for (;;) {
 
-        FD_ZERO(&fd); 
-        FD_SET(serv_sock, &fd);
+        len = client_len;
+        n = Recvfrom(sockfd, buffer, BUF_SIZE(), 0, client, &len);
 
-        Select(serv_sock + 1, &fd, NULL, NULL, NULL);
+        si = (struct sockaddr_in *)&client; // Приводим servaddr к типу struct sockaddr_in*, для получения нужных нам данных
+        recv_addr = inet_ntoa(si->sin_addr); // Получаем адрес отправителя
 
-        if (FD_ISSET(serv_sock, &fd)){ //Если пришел запрос на соединение
+        /* Выводим сообщение и информацию о нем */
+        printf("N:\t%d\nSIN_ADDR:\t%s\nSIN_FAMILY:\t%d\nSIN_PORT:\t%d\nMESSAGE:\t%s\n", n, recv_addr, 
+                                                                                    si->sin_family, si->sin_port, buffer); 
 
-            client_sock = accept(serv_sock, (struct sockaddr *)NULL, NULL);
-            count++;
+        sleep(2);
 
-            printf("connection #%d open\n", count);
-
-            //Добавляем сокет к набору, чтоб проверять налчие данных
-            FD_ZERO(&fd); 
-            FD_SET(client_sock, &fd);
-            
-            Select(client_sock + 1, &fd, NULL, NULL, NULL);
-
-            if (FD_ISSET(client_sock, &fd)) { //Если пришли данные с сокета клиента
-
-                answ_len = recv(client_sock, buffer, BUF_SIZE(), 0); 
-                printf("Message recerved: %s\n", buffer);
-
-            }
-
-        }
-
-        printf("connection #%d closed\n", count);
-
-        /*Завершение соединения с текущм клиентом*/
-        shutdown(client_sock, SHUT_RDWR);
-        close(client_sock);
+        Sendto(sockfd, buffer, BUF_SIZE(), 0, client, client_len); // Отправляем сообщение назад
 
     }
+
+}
+
+int main(int argc, char const **argv) {
+
+    int sockfd;
+    struct sockaddr_in servaddr, clientaddr;
+
+    sockfd = Socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP); // Сокет инициализируется как простой UDP-сокет
+
+    memset(&servaddr, 0, sizeof(servaddr));
+
+    servaddr.sin_family = AF_INET;
+    servaddr.sin_addr.s_addr = INADDR_ANY;
+    servaddr.sin_port = htons(SERVER_PORT());
+
+    Bind(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
+
+    tk_echo(sockfd, (struct sockaddr *)&clientaddr, sizeof(clientaddr)); // Функция, принимающая сообщение с RAW-сокета на клиенте и 
+                                                                         // отправляющая его обратно
+
+    shutdown(sockfd, SHUT_RDWR);
+    close(sockfd);
 
     return 0;
 

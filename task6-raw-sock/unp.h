@@ -27,6 +27,8 @@
 #include <fcntl.h>
 #include <net/ethernet.h>
 #include <netinet/tcp.h>
+#include <netinet/ip.h>
+#include <netinet/udp.h>
 #ifdef HAVE_SYS_SELECT_H
 #include <sys/select.h> /* для удобства */
 #endif
@@ -146,25 +148,31 @@ struct if_nameindex {
 
 //константы, обернутые в функции
 
-int BUF_SIZE(){
+int BUF_SIZE() {
 
     return 64;
 
 }
 
-int SERVER_PORT(){
+int PACKET_LEN() {
+
+    return 8192;
+
+}
+
+int SERVER_PORT() {
 
     return 3333;
 
 }
 
-int CLIENT_PORT(){
+int CLIENT_PORT() {
 
     return 3334;
 
 }
 
-int QU_SIZE(){
+int QU_SIZE() {
 
     return 25;
 
@@ -241,7 +249,33 @@ void Connect(int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen) {
 
     }
 
-} 
+}
+
+ssize_t Sendto(int s, const void *msg, size_t len, int flags, const struct sockaddr *to, socklen_t tolen) {
+
+    if (sendto(s, msg, len, flags, to, tolen) < 0) {
+
+        perror("\n\n!!!! sento error:");
+
+    } 
+
+}
+
+int Recvfrom(int s, void *buf, size_t len, int flags, struct sockaddr *from, socklen_t *fromlen) {
+
+    int n = 0;
+
+    if ((n = recvfrom(s, buf, len, flags, from, fromlen)) < 0) {
+
+        perror("\n\n!!!! recvfrom error:");
+
+    } else {
+
+        return n;
+
+    }
+
+}  
 
 
 /* Обертки libpcap */  /*   
@@ -324,3 +358,4 @@ void Pcap_loop(pcap_t *descr, int cnt, pcap_handler callback, u_char *user) {
 
 }
 */
+
