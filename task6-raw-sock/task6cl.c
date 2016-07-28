@@ -64,8 +64,8 @@ void gv_echo(FILE *f, int sockfd, struct sockaddr *servaddr, socklen_t len, char
     rec2 = recvline + 28; // Смещаем указатель к полю DATA принятого пакета
 
     si = (struct sockaddr_in *)&servaddr; // Приводим servaddr к типу struct sockaddr_in*, для получения нужных нам данных
-
     recv_addr = inet_ntoa(si->sin_addr);
+    
     printf("N:\t%d\nSIN_ADDR:\t%s\nSIN_FAMILY:\t%d\nSIN_PORT:\t%d\nMESSAGE:%s\n", n, 
                                                 recv_addr, si->sin_family, si->sin_port, rec2); // Вывод сообщения и иноформации о нем
 
