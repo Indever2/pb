@@ -1,8 +1,8 @@
 /* * * * * * * * * * * * * * * * * * * * * * * *
-*     Задание 6.Сервер.                        *
+*     Задание 10. Сервер.                      *
 *     Прием/передача сообщений с RAW-сокета,   * 
 *     с нашими собственными заголовками.       *
-*     (ИСПОЛЬЗУЕТСЯ ПРОТОКОЛ UDP)              *
+*     (Ethernet, IP, UDP)                      *
 * * * * * * * * * * * * * * * * * * * * * * * */
 #include "unp.h"
 
@@ -28,11 +28,12 @@ void tk_echo(int sockfd, struct sockaddr *client, socklen_t client_len) {
 
         /* Выводим сообщение и информацию о нем */
         printf("N:\t%d\nSIN_ADDR:\t%s\nSIN_FAMILY:\t%d\nSIN_PORT:\t%d\nMESSAGE:\t%s\n", n, recv_addr, 
-                                                                                    si->sin_family, si->sin_port, buffer); 
+                                                                                    si->sin_family, si->sin_port, buffer);
 
-        sleep(2);
+        sleep(1);
 
-        Sendto(sockfd, buffer, BUF_SIZE(), 0, client, client_len); // Отправляем сообщение назад
+        /* Отправляем ответ */
+        Sendto(sockfd, buffer, BUF_SIZE(), 0, client, len);             
 
     }
 
@@ -55,7 +56,8 @@ int main(int argc, char const **argv) {
 
     tk_echo(sockfd, (struct sockaddr *)&clientaddr, sizeof(clientaddr)); // Функция, принимающая сообщение с RAW-сокета на клиенте и 
                                                                          // отправляющая его обратно
-
+    
+/* Закрываем сокет и освобождаем память */
     shutdown(sockfd, SHUT_RDWR);
     close(sockfd);
 

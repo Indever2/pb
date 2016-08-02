@@ -2,6 +2,7 @@
  /* Наш собственный заголовочный файл */
 //#ifndef __unp_h
 #define __unp_h
+#include <net/if.h>
 #include <sys/mman.h>
 #include <sys/types.h> /* основные системные типы данных */
 #include <sys/socket.h> /* основные определения сокетов */
@@ -9,7 +10,8 @@
 #include <time.h> /* структура timespec{} для функции pselect() */
 #include <netinet/in.h> /* структура sockaddr_in{} и другие сетевые
                                определения */
-#include <pcap.h> /* для захвата пакетов */
+#include <netpacket/packet.h>
+//#include <pcap.h> /* для захвата пакетов */
 #include <netinet/if_ether.h> 
 #include <arpa/inet.h> /* inet(3) функции */
 #include <errno.h>
@@ -25,6 +27,12 @@
 #include <sys/wait.h>
 #include <sys/un.h> /* для доменных сокетов Unix */
 #include <fcntl.h>
+#include <net/ethernet.h>
+#include <netinet/tcp.h>
+#include <netinet/ip.h>
+#include <netinet/udp.h>
+#include <sys/ioctl.h>
+#include <linux/if_ether.h>
 #ifdef HAVE_SYS_SELECT_H
 #include <sys/select.h> /* для удобства */
 #endif
@@ -133,36 +141,34 @@ char        __ss_pad2[_SS_PAD2SIZE];
 typedef void Sigfunc(int); /* для обработчиков сигналов */
 #define min(a, b) ((а) < (b) ? (a) : (b))
 #define max(a, b) ((a) > (b) ? (a) : (b))
-#ifndef HAVE_IF_NAMEINDEX_STRUCT
-struct if_nameindex {
-
-  unsigned int if_index; /* 1, 2, ... */
-  char *if_name; /* имя, заканчивающееся нулем: "le0", ... */
-
-};
-#endif
 
 //константы, обернутые в функции
 
-int BUF_SIZE(){
+int BUF_SIZE() {
 
     return 64;
 
 }
 
-int SERVER_PORT(){
+int PACKET_LEN() {
+
+    return 1024;
+
+}
+
+int SERVER_PORT() {
 
     return 3333;
 
 }
 
-int CLIENT_PORT(){
+int CLIENT_PORT() {
 
     return 3334;
 
 }
 
-int QU_SIZE(){
+int QU_SIZE() {
 
     return 25;
 
@@ -239,10 +245,36 @@ void Connect(int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen) {
 
     }
 
-} 
+}
+
+ssize_t Sendto(int s, const void *msg, size_t len, int flags, const struct sockaddr *to, socklen_t tolen) {
+
+    if (sendto(s, msg, len, flags, to, tolen) < 0) {
+
+        perror("sento error:\t");
+
+    } 
+
+}
+
+int Recvfrom(int s, void *buf, size_t len, int flags, struct sockaddr *from, socklen_t *fromlen) {
+
+    int n = 0;
+
+    if ((n = recvfrom(s, buf, len, flags, from, fromlen)) < 0) {
+
+        perror("recvfrom error:\t");
+
+    } else {
+
+        return n;
+
+    }
+
+}  
 
 
-/* Обертки libpcap */     
+/* Обертки libpcap */  /*   
 
 char *Pcap_lookupdev(char *errbuf) {
 
@@ -321,3 +353,5 @@ void Pcap_loop(pcap_t *descr, int cnt, pcap_handler callback, u_char *user) {
     } 
 
 }
+*/
+

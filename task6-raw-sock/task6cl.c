@@ -110,7 +110,7 @@ int main(int argc, char const **argv) {
     ip->saddr = inet_addr("127.255.255.12");
     ip->daddr = servaddr.sin_addr.s_addr;
 
-    ip->tot_len = sizeof(struct udphdr) + sizeof(struct iphdr) + strlen(data); // Считаем общую длинну пакета
+    ip->tot_len = htons(sizeof(struct udphdr) + sizeof(struct iphdr) + strlen(data)); // Считаем общую длинну пакета
     ip->check = csum((unsigned short *)buffer, ip->tot_len);  // Считаем контрольную сумму для IP-заголовка
 
     /* Заполнение нашего UDP-заголовка */
