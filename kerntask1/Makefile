@@ -7,4 +7,4 @@ all:
 	$(MAKE) -C $(KDIR) M=$(PWD) modules
 .PHONY : clean
 clean:
-	rm -f modules.order Module.symvers test.ko test.mod.c test.mod.o test.o
+	rm -f modules.order Module.symvers test.ko test.mod.c test.mod.o test.o 
