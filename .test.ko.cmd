@@ -1,0 +1,1 @@
+cmd_/home/indever/prg/kernel/modulesources/test.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/indever/prg/kernel/modulesources/test.ko /home/indever/prg/kernel/modulesources/test.o /home/indever/prg/kernel/modulesources/test.mod.o
