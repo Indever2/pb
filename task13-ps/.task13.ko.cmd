@@ -1,0 +1,1 @@
+cmd_/home/indever/prg/kernel/modulesources/task13-ps/task13.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/indever/prg/kernel/modulesources/task13-ps/task13.ko /home/indever/prg/kernel/modulesources/task13-ps/task13.o /home/indever/prg/kernel/modulesources/task13-ps/task13.mod.o
