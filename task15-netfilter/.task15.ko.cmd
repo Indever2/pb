@@ -1,0 +1,1 @@
+cmd_/home/indever/prg/kernel/modulesources/task15-netfilter/task15.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/indever/prg/kernel/modulesources/task15-netfilter/task15.ko /home/indever/prg/kernel/modulesources/task15-netfilter/task15.o /home/indever/prg/kernel/modulesources/task15-netfilter/task15.mod.o

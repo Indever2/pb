@@ -67,7 +67,7 @@ void gv_echo(FILE *f, int sockfd, struct sockaddr *servaddr, socklen_t len, char
     recv_addr = inet_ntoa(si->sin_addr);
     
     printf("N:\t%d\nSIN_ADDR:\t%s\nSIN_FAMILY:\t%d\nSIN_PORT:\t%d\nMESSAGE:%s\n", n, 
-                                                recv_addr, si->sin_family, si->sin_port, rec2); // Вывод сообщения и иноформации о нем
+                                                recv_addr, ntohs(si->sin_family), ntohs(si->sin_port), rec2); // Вывод сообщения и иноформации о нем
 
 }
 
