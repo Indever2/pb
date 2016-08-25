@@ -1,0 +1,1 @@
+cmd_/home/indever/prg/kernel/modulesources/task16-net-con/task16.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/indever/prg/kernel/modulesources/task16-net-con/task16.ko /home/indever/prg/kernel/modulesources/task16-net-con/task16.o /home/indever/prg/kernel/modulesources/task16-net-con/task16.mod.o
