@@ -24,18 +24,49 @@ int strtoint(char * in) {
     return sum;
 }
 
+
+
 int state_validator(char *str) {
-    int i = 0;
+    int i = 0, check_counter = 0;
     char state_buffer[255] = "EMPTY";
-    printf("%s\n", state_buffer);
 
     while (str[i] != '\0') {
         if (str[i] != ' ') {
             if (strcmp(state_buffer, "EMPTY") == 0)
                 memset(state_buffer, 0, sizeof(state_buffer));
-            strcat(state_buffer, &str[i]);
+            strncat(state_buffer, &str[i], 1);
         } else {
             if (strcmp(state_buffer, "EMPTY") != 0) {
+                if (state_buffer[0] == '/') {
+                    state_buffer[0]++;
+                    switch (check_counter) {
+                        case 0:
+                            if ((strtoint(state_buffer) < 1) || (strtoint(state_buffer) > 59))
+                                return INCORRECT_EXPRESSION;
+                            check_counter++;
+                            break;
+                        case 1:
+                            if ((strtoint(state_buffer) < 1) || (strtoint(state_buffer) > 59))
+                                return INCORRECT_EXPRESSION;
+                            check_counter++;
+                            break;
+                        case 2:
+                            if ((strtoint(state_buffer) < 1) || (strtoint(state_buffer) > 23))
+                                return INCORRECT_EXPRESSION;
+                            check_counter++;
+                            break;
+                        case 3:
+                            if ((strtoint(state_buffer) < 1) || (strtoint(state_buffer) > 11))
+                                return INCORRECT_EXPRESSION;
+                            check_counter++;
+                            break;
+                        default:
+                            if ((strtoint(state_buffer) < 1) || (strtoint(state_buffer) > 99))
+                                return INCORRECT_EXPRESSION;
+                            check_counter++;
+                            break;
+                    }
+                }
                 memset(state_buffer, 0, sizeof(state_buffer));
                 strcpy(state_buffer, "EMPTY");
             }
@@ -46,9 +77,11 @@ int state_validator(char *str) {
     }
     if (strcmp(state_buffer, "EMPTY") == 0)
         return INCORRECT_EXPRESSION;
-    else
+    else {
         return CORRECT_EXPRESSION;
+    }
 } 
+
 void debug_print(char *str) {
     int i = 0;
     while (str[i] != '\0') {
@@ -63,47 +96,8 @@ void debug_print(char *str) {
     printf("\n");
 }
 
-int value_validator(char *str) {
-    int i = 0, j = 0, value_counter = 0;
-    char buf[255];
-    char **upd_conf = malloc(sizeof(char *) * 5);
-
-    memset(buf, 0, sizeof(buf));
-    size_t needed_mem = 0x0000;
-
-    do {
-        if ((str[i] != ' ') && (str[i] != '\0')) {
-            buf[j] = str[i];
-            j++;
-        } else {
-            buf[j] = '\0';
-            needed_mem = snprintf(NULL, 0, "%s", buf);
-            printf("-->%d\n", needed_mem);
-            upd_conf[value_counter] = malloc(sizeof(char) * (needed_mem++));
-            snprintf(upd_conf[value_counter], needed_mem, "%s", buf);
-            printf("-- %s\n", upd_conf[value_counter]);
-            value_counter++;
-            j = 0;
-            memset(&buf, 0, sizeof(buf));
-        }
-        i++;
-    } while (str[i] != '\0');
-
-    /*for (i = 0; i < 5; i++) {
-        printf("-- %s\n", upd_conf[i]);
-    }*/
-    for (i = 0; i < 5; i++) {
-        free(upd_conf[i]);
-    }
-    free(upd_conf); 
-}
-
 int validator(char *str) {
     int i = 0, spaces = 0, slashes = 0, stars = 0;
-
-    debug_print(str);
-
-    i = 0;
 
     while (str[i] != '\0') {
 
@@ -140,8 +134,6 @@ int validator(char *str) {
     }    
 
     if ((spaces == 4) && (state_validator(str) == CORRECT_EXPRESSION) && (stars <= 4) && (slashes <= 5)) {
-        debug_print(str);
-        value_validator(str);
         return CORRECT_EXPRESSION;
     }
     else
