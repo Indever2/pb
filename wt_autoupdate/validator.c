@@ -46,12 +46,17 @@ void debug_print(char *str) {
     int i = 0;
     while (str[i] != '\0') {
         if (str[i] == '\n')
-            printf("--END\n");
+            printf("/n");
         else if (str[i] == ' ')
             printf("_");
+        else if (str[i] == '\0')
+            printf("/0\n");
         else
             printf("%c", str[i]);
         i++;
+    }
+    if (str[i] == '\0') {
+        printf("/0!\n");
     }
     printf("\n");
 }
@@ -154,7 +159,7 @@ int validator(char *str) {
     if (slashes > 5)
         return INCORRECT_EXPRESSION;
     else if (slashes > 1)
-        str = slashes_distroyer(str, slashes - 1);  
+        str = slashes_distroyer(str, slashes - 1);    
 
     if ((spaces == 4) && (state_validator(str) == CORRECT_EXPRESSION) && (stars <= 4)) {
         return CORRECT_EXPRESSION;

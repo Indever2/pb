@@ -1,45 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <time.h>
-#include <string.h>
-
-#define INCORRECT_EXPRESSION   -1
-#define CORRECT_EXPRESSION      1      
-
-/* Функция, приводящая аргумент типа char* к виду int */
-int strtoint(char * in) { 
-    int i = 0, j = 0;
-    int len = 0, sum = 0, multipler = 1; // multipler - множитель, нужен для правилльной позиционировки по разрядам
-    len = strlen(in);
-    
-    for (i = 0; i < len; i++) {
-        for (j = 0; j < i; j++)
-            multipler *= 10; // После каждой итерации цикла множитель увеличивается в 10 раз.
-        sum += (in[len - i - 1] - '0') * multipler; // Прибавляаем к сумме число, полученное умножением извлеченного символа на множитель.
-        multipler = 1; // Обнуляем множитель
-    }
-    
-    return sum;
-}
-
-/*
-int days_in_month(int month) {
-    switch (month) {
-        case 1:
-        case 3:
-        case 5:
-        case 7:
-        case 8:
-        case 10:
-        case 12:
-            return 31;
-        case 2:
-            return 28;
-        default:
-            return 30;
-    }
-}*/
+#include "header.h"
 
 void need_update(char **upd_conf, struct tm * cur_time, time_t last_update) {
     printf("%.2f\n", difftime(mktime(cur_time), last_update));
@@ -116,7 +75,7 @@ void need_update(char **upd_conf, struct tm * cur_time, time_t last_update) {
 }
 
 int main(int argc, char **argv) {
-    /* No validation in this program */
+
     char **upd_conf = NULL;
     char buf[255], str[255];
 
@@ -133,10 +92,16 @@ int main(int argc, char **argv) {
     structured_time = localtime(&cur_time);
     
     fgets(str, 255, stdin);
+
+    if (validator(str) == INCORRECT_EXPRESSION) {
+        printf("ERROR. Incorrect expression\n");
+        return -1;
+    }
+
     upd_conf = malloc(sizeof(char *) * 5);
     
-    while (str[i] != '\0') {
-        if ((str[i] != ' ') && (str[i] != '\n')) {
+    while (value_counter < 5) {
+        if ((str[i] != ' ') && (str[i] != '\0')) {
             buf[j] = str[i];
             j++;
         } else {
@@ -144,12 +109,14 @@ int main(int argc, char **argv) {
             needed_mem = snprintf(NULL, 0, "%s", buf);
             upd_conf[value_counter] = malloc(sizeof(char) * (needed_mem += 2));
             snprintf(upd_conf[value_counter], needed_mem, "%s", buf);
+            printf("------ > %s\n", upd_conf[value_counter]);
             value_counter++;
             j = 0;
             memset(&buf, 0, sizeof(buf));
         }
         i++;
     }
+
     printf("current:\t%d %d %d %d %d\n", structured_time->tm_min, structured_time->tm_hour, 
            structured_time->tm_mday, structured_time->tm_mon + 1, structured_time->tm_year - 100);
     printf("last_upd:\t%d %d %d %d %d\n", backup_st->tm_min, backup_st->tm_hour, 
