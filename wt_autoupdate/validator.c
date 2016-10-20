@@ -96,7 +96,30 @@ int state_validator(char *str) {
                                 return INCORRECT_EXPRESSION;
                             break;
                     }
-                }
+                } else {
+                    switch (check_counter) {
+                        case 0:
+                             if ((strtoint(state_buffer) < 0) || (strtoint(state_buffer) > 59))
+                                return INCORRECT_EXPRESSION;
+                            break;
+                        case 1:
+                            if ((strtoint(state_buffer) < 0) || (strtoint(state_buffer) > 23))
+                                return INCORRECT_EXPRESSION;
+                            break;
+                        case 2:
+                            if ((strtoint(state_buffer) < 1) || (strtoint(state_buffer) > 31))
+                                return INCORRECT_EXPRESSION;
+                            break;
+                        case 3:
+                            if ((strtoint(state_buffer) < 1) || (strtoint(state_buffer) > 12))
+                                return INCORRECT_EXPRESSION;
+                            break;
+                        default:
+                            if ((strtoint(state_buffer) < 16) || (strtoint(state_buffer) > 116))
+                                return INCORRECT_EXPRESSION;
+                            break;
+                    }
+                } 
                 if ((strcmp(state_buffer, "EMPTY") != 0) && (str[i] != '\0')) {
                     memset(state_buffer, 0, sizeof(state_buffer));
                     strcpy(state_buffer, "EMPTY");
