@@ -127,7 +127,7 @@ int main(int argc, char **argv) {
     for (i = 0; i < 5; i++) {
         free(upd_conf[i]);
     }
-
+    fclose(last_upd_file);
     free(upd_conf);
     free(backup_st);
     return 0;
