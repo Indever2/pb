@@ -11,8 +11,8 @@
 #define FALSE                  -1
 
 void debug_print(char *);
-void need_update(char **, struct tm *, time_t);
 char * slashes_distroyer(char *);
+int need_update(char **, struct tm *, time_t);
 int state_validator(char *);
 int validator(char *);
 int strtoint(char *);

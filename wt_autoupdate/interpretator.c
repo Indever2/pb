@@ -1,82 +1,108 @@
 #include "header.h"
 
-void need_update(char **upd_conf, struct tm * cur_time, time_t last_update) {
-//    printf("%.2f\n", difftime(mktime(cur_time), last_update));
+int need_update(char **upd_conf, struct tm * cur_time, time_t last_update) {
+    unsigned short int upd_counter = 0;
+/*    printf("%.2f\n", difftime(mktime(cur_time), last_update)); */
 
     if (strcmp(upd_conf[0], "*") == 0) {
         printf("min:\tyes\n");
+        upd_counter++;
     } else if (upd_conf[0][0] != '/') {
-        if (strtoint(upd_conf[0]) == cur_time->tm_min)
+        if (strtoint(upd_conf[0]) == cur_time->tm_min) {
             printf("min:\tyes\n");
+            upd_counter++;
+        }
         else
             printf("min:\tno\n");
     } else {
-        if ((strtoint(upd_conf[0] + 1) * 60) <= difftime(mktime(cur_time), last_update))
+        if ((strtoint(upd_conf[0] + 1) * 60) <= difftime(mktime(cur_time), last_update)) {
             printf("min:\tREG yes\n");
+            upd_counter++;
+        }
         else
             printf("min:\tREG no\n");
     }
 
     if (strcmp(upd_conf[1], "*") == 0) {
         printf("hour:\tyes\n");
+        upd_counter++;
     } else if (upd_conf[1][0] != '/') {
-        if (strtoint(upd_conf[1]) == cur_time->tm_hour)
+        if (strtoint(upd_conf[1]) == cur_time->tm_hour) {
             printf("hour:\tyes\n");
+            upd_counter++;
+        }
         else
             printf("hour\tno\n");
     } else {
-        if ((strtoint(upd_conf[1] + 1) * 60 * 60) <= difftime(mktime(cur_time), last_update))
+        if ((strtoint(upd_conf[1] + 1) * 60 * 60) <= difftime(mktime(cur_time), last_update)) {
             printf("hour:\tREG yes\n");
+            upd_counter++;
+        }
         else
             printf("hour:\tREG no\n");
     }
 
     if (strcmp(upd_conf[2], "*") == 0) {
         printf("day:\tyes\n");
+        upd_counter++;
     } else if (upd_conf[2][0] != '/') {
-        if (strtoint(upd_conf[2]) == cur_time->tm_mday)
+        if (strtoint(upd_conf[2]) == cur_time->tm_mday) {
             printf("day:\tyes\n");
+            upd_counter++;
+        }
         else
             printf("day:\tno\n");
     } else {
-        if ((strtoint(upd_conf[2] + 1) * 60 * 60 * 24) <= difftime(mktime(cur_time), last_update))
+        if ((strtoint(upd_conf[2] + 1) * 60 * 60 * 24) <= difftime(mktime(cur_time), last_update)) {
             printf("day:\tREG yes\n");
+            upd_counter++;
+        }
         else
             printf("day:\tREG no\n");
     }
 
     if (strcmp(upd_conf[3], "*") == 0) {
         printf("month:\tyes\n");
+        upd_counter++;
     } else if (upd_conf[3][0] != '/') {
-        if (strtoint(upd_conf[3]) == (cur_time->tm_mon + 1))
+        if (strtoint(upd_conf[3]) == (cur_time->tm_mon + 1)) {
             printf("month:\tyes\n");
+            upd_counter++;
+        }
         else
             printf("month:\tno\n");
     } else {
-        if (strtoint(upd_conf[3] + 1) * 60 * 60 * 24 * 30 <= difftime(mktime(cur_time), last_update))
+        if (strtoint(upd_conf[3] + 1) * 60 * 60 * 24 * 30 <= difftime(mktime(cur_time), last_update)) {
             printf("month:\tREG yes\n");
+            upd_counter++;
+        }
         else
             printf("month:\tREG no\n");
     }
 
     if (strcmp(upd_conf[4], "*") == 0) {
-        printf("year:\tyes\n");          
+        printf("year:\tyes\n");         
+        upd_counter++; 
     } else if (upd_conf[4][0] != '/') {
-        if (strtoint(upd_conf[4]) == (cur_time->tm_year - 100))
+        if (strtoint(upd_conf[4]) == (cur_time->tm_year - 100)) {
             printf("year:\tyes\n");
+            upd_counter++;
+        }
         else
             printf("year:\tno\n");
     } else {
-        if ((strtoint(upd_conf[4] + 1) * 60 * 60 * 24 * 365) <= difftime(mktime(cur_time), last_update))
+        if ((strtoint(upd_conf[4] + 1) * 60 * 60 * 24 * 365) <= difftime(mktime(cur_time), last_update)) {
             printf("year:\tREG yes\n");
+            upd_counter++;
+        }
         else
             printf("year:\tREG no\n");
     }
+
+    return upd_counter;
 }
 
 int main(int argc, char **argv) {
-
-    FILE *last_upd_file = fopen("time.txt", "r");
 
     char **upd_conf = NULL;
     char buf[255], str[255];
@@ -85,9 +111,7 @@ int main(int argc, char **argv) {
 
     size_t needed_mem = 0x0000;
 
-    long int cur_time = time(NULL), last_update = 0;
-
-    fscanf(last_upd_file, "%ld", &last_update);
+    long int cur_time = time(NULL), last_update = strtoint(argv[1]);
 
     struct tm * backup_st = malloc(sizeof(struct tm));
     memmove(backup_st, localtime(&last_update), sizeof(struct tm));
@@ -119,15 +143,15 @@ int main(int argc, char **argv) {
     }
 
     printf("current:\t%d %d %d %d %d\n", structured_time->tm_min, structured_time->tm_hour, 
-           structured_time->tm_mday, structured_time->tm_mon + 1, structured_time->tm_year - 100);
+           structured_time->tm_mday, structured_time->tm_mon + 1, structured_time->tm_year + 1900);
     printf("last_upd:\t%d %d %d %d %d\n", backup_st->tm_min, backup_st->tm_hour, 
-           backup_st->tm_mday, backup_st->tm_mon + 1, backup_st->tm_year - 100);
-    need_update(upd_conf, structured_time, last_update);
+           backup_st->tm_mday, backup_st->tm_mon + 1, backup_st->tm_year + 1900);
+    int nu = need_update(upd_conf, structured_time, last_update);
     
+    printf("---- >  %d\n", nu);
     for (i = 0; i < 5; i++) {
         free(upd_conf[i]);
     }
-    fclose(last_upd_file);
     free(upd_conf);
     free(backup_st);
     return 0;
