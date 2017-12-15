@@ -20,7 +20,7 @@ struct globals_s
     int fifo_fd;
     pid_t pid;
     char fifo_file[64];
-
+    char child_name[64];
 } typedef globals_t;
 
 /* Global variables*/
@@ -117,6 +117,11 @@ int process_start(int argc, char **argv)
         return INVALID_ARGUMENT;
 
     int res = 0;
+    char cmd[255] = { 0 };
+    char args[128] = { 0 };
+    char _args[128] = { 0 };
+    char filename[128] = { 0 };
+    FILE *f = NULL;
 
     msg_t msg_buf;
     memset(&msg_buf, 0, sizeof(msg_buf));
@@ -126,7 +131,8 @@ int process_start(int argc, char **argv)
 
     exec_cmd(argc, argv);
 
-    //daemon(0, 0);
+    daemon(0, 0);
+for_loop:
     for ( ; ; )
     {
         if (check_fifo(&msg_buf))
@@ -134,6 +140,8 @@ int process_start(int argc, char **argv)
             res = process_msg(msg_buf);
         }
         if (res == 0xa) goto stop;
+        if (res == 0xb) goto stop;
+        if (res == 0xc) goto check;
         usleep(30000);
     }
 stop:
@@ -141,6 +149,19 @@ stop:
     unlink(Globals.fifo_file);
     kill(Globals.pid, 9);
     return 0;
+check:
+    snprintf(_args, 127, "%s", argv[0]);
+    for (int i = 1; i < argc; i++)
+    {
+        snprintf(args, 127, "%s %s", _args, argv[i]);
+        snprintf(_args, 127, "%s", args);
+    }
+    snprintf(filename, 127, "%s%s", CHECK_PREFIX, Globals.child_name);
+    snprintf(cmd, 254, "scan.bash \"%s\"", args);
+    system(cmd);
+    goto for_loop;
+restart:
+    goto for_loop;
 }
 
 int main(int argc, char **argv)
@@ -148,6 +169,7 @@ int main(int argc, char **argv)
     if (argc < 3) goto usage;
 
     sprintf(Globals.fifo_file, "%s%s", FIFO_PREFIX, argv[2]);
+    sprintf(Globals.child_name, "%s", argv[2]);
     printf("fifo_file: %s\n", Globals.fifo_file);
 
     if (!strncmp(argv[1], "start", 5))

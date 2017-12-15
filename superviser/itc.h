@@ -2,6 +2,7 @@
 #define ITC_H
 
 const char *FIFO_PREFIX = "/home/indever/tmp/superviser.";
+const char *CHECK_PREFIX = "/home/indever/tmp/";
 
 enum msg_type_e
 {
